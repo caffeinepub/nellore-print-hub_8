@@ -1,4 +1,4 @@
-import { Menu, Printer, Share2, X } from "lucide-react";
+import { Menu, Share2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useGetSiteSettings } from "../hooks/useQueries";
@@ -83,9 +83,11 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-brand-red rounded-md flex items-center justify-center">
-                <Printer size={18} className="text-white" />
-              </div>
+              <img
+                src="/assets/uploads/logo-1.png"
+                alt="Magic Advertising Logo"
+                className="h-12 w-auto object-contain"
+              />
               <div>
                 <p className="text-white font-bold text-base leading-tight tracking-wide">
                   {settings?.companyName || "Nellore Print Hub"}
@@ -140,14 +142,6 @@ export default function Navbar() {
               >
                 GET A FREE QUOTE
               </button>
-
-              <a
-                href="/admin"
-                className="ml-2 px-3 py-1.5 text-xs font-semibold border border-gray-600 text-gray-300 rounded hover:border-brand-red hover:text-brand-red transition-colors"
-                data-ocid="nav.admin.link"
-              >
-                Admin
-              </a>
             </div>
 
             <button
@@ -214,12 +208,6 @@ export default function Navbar() {
               >
                 📤 Share on WhatsApp
               </button>
-              <a
-                href="/admin"
-                className="block px-4 py-2.5 text-sm text-gray-400 hover:text-white"
-              >
-                Admin Panel
-              </a>
             </div>
           </motion.div>
         )}
