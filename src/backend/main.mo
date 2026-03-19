@@ -8,13 +8,13 @@ import Principal "mo:core/Principal";
 import List "mo:core/List";
 import Nat "mo:core/Nat";
 import Runtime "mo:core/Runtime";
-import Migration "migration";
+
 import Storage "blob-storage/Storage";
 import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
-(with migration = Migration.run)
+
 actor {
   include MixinStorage();
 

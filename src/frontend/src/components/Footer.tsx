@@ -50,6 +50,12 @@ export default function Footer() {
             <p className="text-gray-500">
               © {year} Nellore Print Hub | Magic Advertising
             </p>
+            <p className="text-gray-500 text-center">
+              Website Creator:{" "}
+              <span className="text-gray-300 font-semibold">
+                Shaik Munwar Basha
+              </span>
+            </p>
             <p className="text-gray-600">
               Built with ❤️ using{" "}
               <a
