@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+
+    /* Brand: dark header #111111 */
+    --brand-dark: 0.17 0 0;
+    /* Brand: red accent #e60023 */
+    --brand-red: 0.49 0.22 27;
+    /* Brand: lighter red #ff0033 */
+    --brand-red-light: 0.52 0.24 27;
+    /* WhatsApp green #25D366 */
+    --whatsapp-green: 0.73 0.19 149;
+
+    --background: 1 0 0;
+    --foreground: 0.13 0 0;
+    --card: 1 0 0;
+    --card-foreground: 0.13 0 0;
+    --popover: 1 0 0;
+    --popover-foreground: 0.13 0 0;
+    --primary: 0.49 0.22 27;
+    --primary-foreground: 1 0 0;
+    --secondary: 0.96 0 0;
+    --secondary-foreground: 0.2 0 0;
+    --muted: 0.96 0 0;
+    --muted-foreground: 0.45 0 0;
+    --accent: 0.49 0.22 27;
+    --accent-foreground: 1 0 0;
+    --destructive: 0.49 0.22 27;
+    --destructive-foreground: 1 0 0;
+    --border: 0.9 0 0;
+    --input: 0.9 0 0;
+    --ring: 0.49 0.22 27;
+    --chart-1: 0.646 0.222 41.116;
+    --chart-2: 0.6 0.118 184.704;
+    --chart-3: 0.398 0.07 227.392;
+    --chart-4: 0.828 0.189 84.429;
+    --chart-5: 0.769 0.188 70.08;
+    --sidebar: 0.17 0 0;
+    --sidebar-foreground: 1 0 0;
+    --sidebar-primary: 0.49 0.22 27;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.25 0 0;
+    --sidebar-accent-foreground: 1 0 0;
+    --sidebar-border: 0.3 0 0;
+    --sidebar-ring: 0.49 0.22 27;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Poppins", sans-serif;
+  }
+}
+
+@layer utilities {
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold uppercase tracking-wider text-center mb-2;
+    color: oklch(0.13 0 0);
+  }
+  .section-subtitle {
+    @apply text-center text-base mb-12;
+    color: oklch(0.45 0 0);
+  }
+  .brand-red {
+    color: oklch(0.49 0.22 27);
+  }
+  .bg-brand-dark {
+    background-color: oklch(0.17 0 0);
+  }
+  .bg-brand-red {
+    background-color: oklch(0.49 0.22 27);
+  }
+  .btn-red {
+    @apply bg-brand-red text-white font-semibold uppercase tracking-wide px-6 py-3 rounded-md shadow hover:opacity-90 transition-opacity;
+  }
+}
+
+@keyframes whatsapp-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 oklch(0.73 0.19 149 / 0.5);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 12px oklch(0.73 0.19 149 / 0);
+  }
+}
+
+.whatsapp-fab {
+  animation: whatsapp-pulse 2.5s ease-in-out infinite;
+}
