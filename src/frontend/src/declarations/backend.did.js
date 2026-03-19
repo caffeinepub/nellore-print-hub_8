@@ -36,12 +36,45 @@ export const QuoteRequest = IDL.Record({
   'id' : IDL.Nat,
   'serviceType' : IDL.Text,
   'name' : IDL.Text,
+  'isRead' : IDL.Bool,
   'attachedFile' : IDL.Opt(ExternalBlob),
+  'responseTimestamp' : IDL.Opt(Time),
+  'response' : IDL.Opt(IDL.Text),
   'timestamp' : Time,
   'phoneNumber' : IDL.Text,
   'projectDetails' : IDL.Text,
 });
+export const Review = IDL.Record({
+  'id' : IDL.Nat,
+  'reviewText' : IDL.Text,
+  'reviewerName' : IDL.Text,
+  'timestamp' : Time,
+  'rating' : IDL.Nat,
+});
+export const Service = IDL.Record({
+  'id' : IDL.Nat,
+  'title' : IDL.Text,
+  'icon' : IDL.Text,
+  'description' : IDL.Text,
+  'timestamp' : Time,
+});
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const SiteSettings = IDL.Record({
+  'websiteDescription' : IDL.Text,
+  'tagline' : IDL.Text,
+  'websiteUrl' : IDL.Text,
+  'heroText' : IDL.Text,
+  'whatsappNumber' : IDL.Text,
+  'address' : IDL.Text,
+  'aboutText' : IDL.Text,
+  'companyName' : IDL.Text,
+  'phoneNumber' : IDL.Text,
+});
+export const VisitorLog = IDL.Record({
+  'name' : IDL.Text,
+  'mobileNumber' : IDL.Text,
+  'timestamp' : Time,
+});
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -71,35 +104,59 @@ export const idlService = IDL.Service({
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'adminAddReview' : IDL.Func([IDL.Text, IDL.Nat, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createGalleryItem' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text, ExternalBlob],
       [],
       [],
     ),
+  'createService' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   'deleteGalleryItem' : IDL.Func([IDL.Text], [], []),
+  'deleteQuoteRequest' : IDL.Func([IDL.Nat], [], []),
+  'deleteReview' : IDL.Func([IDL.Nat], [], []),
+  'deleteService' : IDL.Func([IDL.Nat], [], []),
   'getAllGalleryItems' : IDL.Func([], [IDL.Vec(GalleryItem)], ['query']),
   'getAllQuoteRequests' : IDL.Func([], [IDL.Vec(QuoteRequest)], ['query']),
+  'getAllReviews' : IDL.Func([], [IDL.Vec(Review)], ['query']),
+  'getAllServices' : IDL.Func([], [IDL.Vec(Service)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getGalleryItem' : IDL.Func([IDL.Text], [GalleryItem], ['query']),
+  'getQuoteCountByPhoneNumber' : IDL.Func([IDL.Text], [IDL.Nat], ['query']),
+  'getQuoteResponseByPhoneNumber' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(QuoteRequest)],
+      ['query'],
+    ),
+  'getService' : IDL.Func([IDL.Nat], [Service], ['query']),
+  'getSiteSettings' : IDL.Func([], [SiteSettings], ['query']),
+  'getUnreadQuoteCount' : IDL.Func([], [IDL.Nat], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'getVisitorLogs' : IDL.Func([], [IDL.Vec(VisitorLog)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'logVisit' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'markAllQuotesAsRead' : IDL.Func([], [], []),
+  'respondToQuoteRequest' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'submitQuoteRequest' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Opt(ExternalBlob)],
       [],
       [],
     ),
+  'submitReview' : IDL.Func([IDL.Text, IDL.Nat, IDL.Text], [], []),
   'updateGalleryItem' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text, ExternalBlob],
       [],
       [],
     ),
+  'updateReview' : IDL.Func([IDL.Nat, IDL.Text, IDL.Nat, IDL.Text], [], []),
+  'updateService' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [], []),
+  'updateSiteSettings' : IDL.Func([SiteSettings], [], []),
 });
 
 export const idlInitArgs = [];
@@ -133,12 +190,45 @@ export const idlFactory = ({ IDL }) => {
     'id' : IDL.Nat,
     'serviceType' : IDL.Text,
     'name' : IDL.Text,
+    'isRead' : IDL.Bool,
     'attachedFile' : IDL.Opt(ExternalBlob),
+    'responseTimestamp' : IDL.Opt(Time),
+    'response' : IDL.Opt(IDL.Text),
     'timestamp' : Time,
     'phoneNumber' : IDL.Text,
     'projectDetails' : IDL.Text,
   });
+  const Review = IDL.Record({
+    'id' : IDL.Nat,
+    'reviewText' : IDL.Text,
+    'reviewerName' : IDL.Text,
+    'timestamp' : Time,
+    'rating' : IDL.Nat,
+  });
+  const Service = IDL.Record({
+    'id' : IDL.Nat,
+    'title' : IDL.Text,
+    'icon' : IDL.Text,
+    'description' : IDL.Text,
+    'timestamp' : Time,
+  });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const SiteSettings = IDL.Record({
+    'websiteDescription' : IDL.Text,
+    'tagline' : IDL.Text,
+    'websiteUrl' : IDL.Text,
+    'heroText' : IDL.Text,
+    'whatsappNumber' : IDL.Text,
+    'address' : IDL.Text,
+    'aboutText' : IDL.Text,
+    'companyName' : IDL.Text,
+    'phoneNumber' : IDL.Text,
+  });
+  const VisitorLog = IDL.Record({
+    'name' : IDL.Text,
+    'mobileNumber' : IDL.Text,
+    'timestamp' : Time,
+  });
   
   return IDL.Service({
     '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -168,35 +258,59 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'adminAddReview' : IDL.Func([IDL.Text, IDL.Nat, IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createGalleryItem' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, ExternalBlob],
         [],
         [],
       ),
+    'createService' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'deleteGalleryItem' : IDL.Func([IDL.Text], [], []),
+    'deleteQuoteRequest' : IDL.Func([IDL.Nat], [], []),
+    'deleteReview' : IDL.Func([IDL.Nat], [], []),
+    'deleteService' : IDL.Func([IDL.Nat], [], []),
     'getAllGalleryItems' : IDL.Func([], [IDL.Vec(GalleryItem)], ['query']),
     'getAllQuoteRequests' : IDL.Func([], [IDL.Vec(QuoteRequest)], ['query']),
+    'getAllReviews' : IDL.Func([], [IDL.Vec(Review)], ['query']),
+    'getAllServices' : IDL.Func([], [IDL.Vec(Service)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getGalleryItem' : IDL.Func([IDL.Text], [GalleryItem], ['query']),
+    'getQuoteCountByPhoneNumber' : IDL.Func([IDL.Text], [IDL.Nat], ['query']),
+    'getQuoteResponseByPhoneNumber' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(QuoteRequest)],
+        ['query'],
+      ),
+    'getService' : IDL.Func([IDL.Nat], [Service], ['query']),
+    'getSiteSettings' : IDL.Func([], [SiteSettings], ['query']),
+    'getUnreadQuoteCount' : IDL.Func([], [IDL.Nat], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'getVisitorLogs' : IDL.Func([], [IDL.Vec(VisitorLog)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'logVisit' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'markAllQuotesAsRead' : IDL.Func([], [], []),
+    'respondToQuoteRequest' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'submitQuoteRequest' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Opt(ExternalBlob)],
         [],
         [],
       ),
+    'submitReview' : IDL.Func([IDL.Text, IDL.Nat, IDL.Text], [], []),
     'updateGalleryItem' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, ExternalBlob],
         [],
         [],
       ),
+    'updateReview' : IDL.Func([IDL.Nat, IDL.Text, IDL.Nat, IDL.Text], [], []),
+    'updateService' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [], []),
+    'updateSiteSettings' : IDL.Func([SiteSettings], [], []),
   });
 };
 

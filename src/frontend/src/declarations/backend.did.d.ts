@@ -21,16 +21,49 @@ export interface QuoteRequest {
   'id' : bigint,
   'serviceType' : string,
   'name' : string,
+  'isRead' : boolean,
   'attachedFile' : [] | [ExternalBlob],
+  'responseTimestamp' : [] | [Time],
+  'response' : [] | [string],
   'timestamp' : Time,
   'phoneNumber' : string,
   'projectDetails' : string,
+}
+export interface Review {
+  'id' : bigint,
+  'reviewText' : string,
+  'reviewerName' : string,
+  'timestamp' : Time,
+  'rating' : bigint,
+}
+export interface Service {
+  'id' : bigint,
+  'title' : string,
+  'icon' : string,
+  'description' : string,
+  'timestamp' : Time,
+}
+export interface SiteSettings {
+  'websiteDescription' : string,
+  'tagline' : string,
+  'websiteUrl' : string,
+  'heroText' : string,
+  'whatsappNumber' : string,
+  'address' : string,
+  'aboutText' : string,
+  'companyName' : string,
+  'phoneNumber' : string,
 }
 export type Time = bigint;
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface VisitorLog {
+  'name' : string,
+  'mobileNumber' : string,
+  'timestamp' : Time,
+}
 export interface _CaffeineStorageCreateCertificateResult {
   'method' : string,
   'blob_hash' : string,
@@ -59,28 +92,48 @@ export interface _SERVICE {
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'adminAddReview' : ActorMethod<[string, bigint, string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createGalleryItem' : ActorMethod<
     [string, string, string, ExternalBlob],
     undefined
   >,
+  'createService' : ActorMethod<[string, string, string], undefined>,
   'deleteGalleryItem' : ActorMethod<[string], undefined>,
+  'deleteQuoteRequest' : ActorMethod<[bigint], undefined>,
+  'deleteReview' : ActorMethod<[bigint], undefined>,
+  'deleteService' : ActorMethod<[bigint], undefined>,
   'getAllGalleryItems' : ActorMethod<[], Array<GalleryItem>>,
   'getAllQuoteRequests' : ActorMethod<[], Array<QuoteRequest>>,
+  'getAllReviews' : ActorMethod<[], Array<Review>>,
+  'getAllServices' : ActorMethod<[], Array<Service>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getGalleryItem' : ActorMethod<[string], GalleryItem>,
+  'getQuoteCountByPhoneNumber' : ActorMethod<[string], bigint>,
+  'getQuoteResponseByPhoneNumber' : ActorMethod<[string], Array<QuoteRequest>>,
+  'getService' : ActorMethod<[bigint], Service>,
+  'getSiteSettings' : ActorMethod<[], SiteSettings>,
+  'getUnreadQuoteCount' : ActorMethod<[], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getVisitorLogs' : ActorMethod<[], Array<VisitorLog>>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'logVisit' : ActorMethod<[string, string], undefined>,
+  'markAllQuotesAsRead' : ActorMethod<[], undefined>,
+  'respondToQuoteRequest' : ActorMethod<[bigint, string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'submitQuoteRequest' : ActorMethod<
     [string, string, string, string, [] | [ExternalBlob]],
     undefined
   >,
+  'submitReview' : ActorMethod<[string, bigint, string], undefined>,
   'updateGalleryItem' : ActorMethod<
     [string, string, string, ExternalBlob],
     undefined
   >,
+  'updateReview' : ActorMethod<[bigint, string, bigint, string], undefined>,
+  'updateService' : ActorMethod<[bigint, string, string, string], undefined>,
+  'updateSiteSettings' : ActorMethod<[SiteSettings], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

@@ -1,6 +1,5 @@
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
-import Time "mo:core/Time";
 import Storage "blob-storage/Storage";
 
 module {
@@ -10,7 +9,12 @@ module {
     projectDetails : Text;
     name : Text;
     phoneNumber : Text;
-    timestamp : Time.Time;
+    attachedFile : ?Storage.ExternalBlob;
+    timestamp : Int;
+  };
+
+  type OldActor = {
+    quoteRequests : Map.Map<Nat, OldQuoteRequest>;
   };
 
   type NewQuoteRequest = {
@@ -20,27 +24,27 @@ module {
     name : Text;
     phoneNumber : Text;
     attachedFile : ?Storage.ExternalBlob;
-    timestamp : Time.Time;
-  };
-
-  type OldActor = {
-    galleryItems : Map.Map<Text, { id : Text; title : Text; description : Text; image : Storage.ExternalBlob }>;
-    quoteRequests : Map.Map<Nat, OldQuoteRequest>;
-    nextQuoteRequestId : Nat;
+    timestamp : Int;
+    response : ?Text;
+    responseTimestamp : ?Int;
+    isRead : Bool;
   };
 
   type NewActor = {
-    galleryItems : Map.Map<Text, { id : Text; title : Text; description : Text; image : Storage.ExternalBlob }>;
     quoteRequests : Map.Map<Nat, NewQuoteRequest>;
-    nextQuoteRequestId : Nat;
   };
 
   public func run(old : OldActor) : NewActor {
     let newQuoteRequests = old.quoteRequests.map<Nat, OldQuoteRequest, NewQuoteRequest>(
-      func(_id, oldQuoteRequest) {
-        { oldQuoteRequest with attachedFile = null };
+      func(_id, oldRequest) {
+        {
+          oldRequest with
+          response = null;
+          responseTimestamp = null;
+          isRead = false;
+        };
       }
     );
-    { old with quoteRequests = newQuoteRequests };
+    { quoteRequests = newQuoteRequests };
   };
 };

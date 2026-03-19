@@ -1,11 +1,13 @@
-import { Menu, Printer, X } from "lucide-react";
+import { Menu, Printer, Share2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { useGetSiteSettings } from "../hooks/useQueries";
 
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
   { label: "Services", href: "#services" },
   { label: "Gallery", href: "#gallery" },
+  { label: "Reviews", href: "#reviews" },
   { label: "Quote", href: "#quote" },
   { label: "Contact", href: "#contact" },
 ];
@@ -24,6 +26,7 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("home");
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { data: settings } = useGetSiteSettings();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -32,7 +35,14 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const sections = ["home", "services", "gallery", "quote", "contact"];
+    const sections = [
+      "home",
+      "services",
+      "gallery",
+      "reviews",
+      "quote",
+      "contact",
+    ];
     const observers: IntersectionObserver[] = [];
     for (const id of sections) {
       const el = document.getElementById(id);
@@ -56,6 +66,15 @@ export default function Navbar() {
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleShare = () => {
+    const desc =
+      settings?.websiteDescription ||
+      "Nellore Print Hub - Professional Printing Services";
+    const url = settings?.websiteUrl || window.location.href;
+    const msg = `${desc} - Visit us: ${url}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-shadow ${scrolled ? "shadow-lg" : ""}`}
@@ -69,10 +88,10 @@ export default function Navbar() {
               </div>
               <div>
                 <p className="text-white font-bold text-base leading-tight tracking-wide">
-                  Nellore Print Hub
+                  {settings?.companyName || "Nellore Print Hub"}
                 </p>
                 <p className="text-gray-400 text-xs leading-tight">
-                  Your Vision Printed to Perfection
+                  {settings?.tagline || "Your Vision Printed to Perfection"}
                 </p>
               </div>
             </div>
@@ -87,7 +106,9 @@ export default function Navbar() {
                     key={link.href}
                     onClick={() => handleNavClick(link.href)}
                     data-ocid={`nav.${id}.link`}
-                    className={`px-4 py-2 text-sm font-medium rounded transition-colors relative ${isActive ? "text-white" : "text-gray-300 hover:text-white"}`}
+                    className={`px-4 py-2 text-sm font-medium rounded transition-colors relative ${
+                      isActive ? "text-white" : "text-gray-300 hover:text-white"
+                    }`}
                   >
                     {link.label}
                     {isActive && (
@@ -99,9 +120,30 @@ export default function Navbar() {
                   </button>
                 );
               })}
+
+              {/* Share Button */}
+              <button
+                type="button"
+                onClick={handleShare}
+                data-ocid="nav.share.button"
+                title="Share on WhatsApp"
+                className="ml-1 p-2 text-gray-300 hover:text-white transition-colors"
+              >
+                <Share2 size={16} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavClick("#quote")}
+                data-ocid="nav.quote.primary_button"
+                className="ml-2 px-4 py-1.5 text-xs font-bold bg-brand-red text-white rounded hover:bg-brand-red-hover transition-colors"
+              >
+                GET A FREE QUOTE
+              </button>
+
               <a
                 href="/admin"
-                className="ml-3 px-4 py-1.5 text-xs font-semibold border border-gray-600 text-gray-300 rounded hover:border-brand-red hover:text-brand-red transition-colors"
+                className="ml-2 px-3 py-1.5 text-xs font-semibold border border-gray-600 text-gray-300 rounded hover:border-brand-red hover:text-brand-red transition-colors"
                 data-ocid="nav.admin.link"
               >
                 Admin
@@ -154,12 +196,24 @@ export default function Navbar() {
                     key={link.href}
                     onClick={() => handleNavClick(link.href)}
                     data-ocid={`nav.mobile.${id}.link`}
-                    className={`block w-full text-left px-4 py-2.5 rounded text-sm font-medium transition-colors ${isActive ? "bg-brand-red text-white" : "text-gray-300 hover:bg-gray-800 hover:text-white"}`}
+                    className={`block w-full text-left px-4 py-2.5 rounded text-sm font-medium transition-colors ${
+                      isActive
+                        ? "bg-brand-red text-white"
+                        : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                    }`}
                   >
                     {link.label}
                   </button>
                 );
               })}
+              <button
+                type="button"
+                onClick={handleShare}
+                data-ocid="nav.mobile.share.button"
+                className="block w-full text-left px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white rounded transition-colors"
+              >
+                📤 Share on WhatsApp
+              </button>
               <a
                 href="/admin"
                 className="block px-4 py-2.5 text-sm text-gray-400 hover:text-white"
