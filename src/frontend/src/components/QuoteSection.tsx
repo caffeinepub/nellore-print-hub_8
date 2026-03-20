@@ -13,6 +13,7 @@ import { motion } from "motion/react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { ExternalBlob } from "../backend";
+import { useActor } from "../hooks/useActor";
 import { useSubmitQuoteRequest } from "../hooks/useQueries";
 
 const SERVICES = [
@@ -34,6 +35,7 @@ export default function QuoteSection() {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const { isFetching } = useActor();
   const submitMutation = useSubmitQuoteRequest();
 
   const buildBlob = async (file: File): Promise<ExternalBlob> => {
@@ -53,14 +55,18 @@ export default function QuoteSection() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const openWhatsApp = () => {
+    const msg = `Hello Nellore Print Hub! I need a quote for: ${service}. Name: ${name}. Phone: ${phone}. Details: ${details}`;
+    const url = `https://wa.me/919390535070?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
+  };
+
   const handleWhatsApp = async () => {
     if (!service || !name || !phone) {
       toast.error("Please fill in service, name and phone number.");
       return;
     }
-    const msg = `Hello Nellore Print Hub! I need a quote for: ${service}. Name: ${name}. Phone: ${phone}. Details: ${details}`;
-    const url = `https://wa.me/919390535070?text=${encodeURIComponent(msg)}`;
-    window.open(url, "_blank");
+    openWhatsApp();
 
     // Also submit to backend (fire and forget)
     try {
@@ -105,14 +111,22 @@ export default function QuoteSection() {
       toast.success("Quote request submitted!");
       resetForm();
     } catch {
-      toast.error("Failed to submit. Please try WhatsApp.");
+      // Fallback: open WhatsApp so user can still reach us
+      openWhatsApp();
+      toast.success("Saved to WhatsApp — we'll get back to you!");
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
     }
   };
 
-  const isPending = submitMutation.isPending || isUploading;
+  const isPending = submitMutation.isPending || isUploading || isFetching;
+
+  const submitButtonLabel = isFetching
+    ? "Connecting..."
+    : isUploading || submitMutation.isPending
+      ? "Uploading..."
+      : "Submit Request";
 
   return (
     <section id="quote" className="py-20 bg-gray-50">
@@ -296,7 +310,8 @@ export default function QuoteSection() {
               >
                 {isPending ? (
                   <>
-                    <Loader2 className="animate-spin" size={18} /> Uploading...
+                    <Loader2 className="animate-spin" size={18} />
+                    {submitButtonLabel}
                   </>
                 ) : (
                   <>
